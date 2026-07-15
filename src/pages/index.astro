@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const recent = posts.slice(0, 5);
+---
+
+<Base title="Eden Jaeger">
+  <h1>Hi, I'm Eden.</h1>
+  <p>
+    Welcome to my corner of the web. I write about things I'm building and
+    learning. You can read more <a href="/about">about me</a>, or browse the
+    <a href="/blog">blog</a>.
+  </p>
+
+  <h2>Recent posts</h2>
+  <ul class="post-list">
+    {
+      recent.map((post) => (
+        <li>
+          <time datetime={post.data.pubDate.toISOString()}>
+            {post.data.pubDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })}
+          </time>
+          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
